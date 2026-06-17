@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhruvin Munjapara — React Native Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:        #0A0C0F;
+    --surface:   #111318;
+    --surface2:  #181C23;
+    --border:    #1E2330;
+    --accent:    #4DFFD2;
+    --accent2:   #7B5EF5;
+    --text:      #E8EBF0;
+    --muted:     #6B7280;
+    --mono:      'DM Mono', monospace;
+    --sans:      'Space Grotesk', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(10,12,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(77,255,210,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(123,94,245,0.07) 0%, transparent 60%);
+  }
+  /* animated grid */
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: 900px;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 32px; height: 1px;
+    background: var(--accent);
+  }
+  h1 {
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+  }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-desc {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 48px;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0A0C0F;
+  }
+  .btn-primary:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(77,255,210,0.25);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 60px;
+    display: flex; gap: 0;
+  }
+  .stat {
+    flex: 1;
+    padding: 0 40px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 60px; }
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 60px;
+  }
+  h2 {
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 60px;
+    line-height: 1.1;
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .skill-chip {
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-chip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(77,255,210,0.05), rgba(123,94,245,0.05));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .skill-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .skill-chip:hover::before { opacity: 1; }
+
+  /* ── EXPERIENCE ── */
+  .exp-list { display: flex; flex-direction: column; gap: 2px; }
+  .exp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 24px;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .exp-item::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .exp-item:hover { border-color: rgba(77,255,210,0.3); }
+  .exp-item:hover::before { opacity: 1; }
+  .exp-role {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .exp-company {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .exp-period {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+  .exp-bullets {
+    grid-column: 1 / -1;
+    list-style: none;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .exp-bullets li {
+    padding-left: 20px;
+    position: relative;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .exp-bullets li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-size: 13px;
+  }
+
+  /* ── PROJECTS ── */
+  #projects { background: var(--surface); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .project-card:hover {
+    border-color: rgba(77,255,210,0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  }
+  .project-card:hover::after { opacity: 1; }
+  .project-name {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .project-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .project-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 4px;
+  }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(77,255,210,0.08);
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(77,255,210,0.15);
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .edu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .edu-card:hover { border-color: rgba(123,94,245,0.4); }
+  .edu-degree {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .edu-abbr {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+  .edu-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .edu-year {
+    position: absolute;
+    top: 36px; right: 36px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    text-align: center;
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(77,255,210,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .contact-inner { position: relative; z-index: 1; }
+  .contact-heading {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .contact-sub {
+    color: var(--muted);
+    font-size: 17px;
+    margin-bottom: 48px;
+    max-width: 420px;
+    margin-left: auto; margin-right: auto;
+  }
+  .contact-links {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;
+    margin-bottom: 60px;
+  }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-family: var(--mono);
+  }
+  .contact-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .contact-link svg { flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer p { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .footer-accent { color: var(--accent); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── CURSOR DOT ── */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(77,255,210,0.4);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: left 0.12s ease, top 0.12s ease, width 0.2s, height 0.2s, opacity 0.2s;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { gap: 20px; }
+    .nav-links a { font-size: 11px; }
+    .hero { padding: 100px 24px 60px; }
+    section { padding: 70px 24px; }
+    .stats-strip { flex-direction: column; padding: 40px 24px; gap: 32px; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 32px; }
+    .stat:last-child { border-bottom: none; padding-bottom: 0; }
+    .edu-grid { grid-template-columns: 1fr; }
+    footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">DM.dev</div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">React Native Developer · 2.8 yrs exp</div>
+    <h1>
+      Building apps<br>
+      <span class="line2">that live in pockets.</span>
+    </h1>
+    <p class="hero-desc">
+      I'm Dhruvin Munjapara — a cross-platform mobile developer based in India, crafting production-grade iOS &amp; Android apps with React Native.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-strip reveal">
+  <div class="stat">
+    <div class="stat-num">2.8<span style="font-size:0.5em">yrs</span></div>
+    <div class="stat-label">Professional experience</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">7+</div>
+    <div class="stat-label">Production apps shipped</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">iOS+Android</div>
+    <div class="stat-label">Cross-platform development</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">MCA</div>
+    <div class="stat-label">Master of Computer Applications</div>
+  </div>
+</div>
+
+<!-- Skills -->
+<section id="skills">
+  <div class="section-eyebrow">Technical Stack</div>
+  <h2>What I work with</h2>
+  <div class="skills-grid reveal">
+    <div class="skill-chip">React Native</div>
+    <div class="skill-chip">React.js</div>
+    <div class="skill-chip">JavaScript</div>
+    <div class="skill-chip">TypeScript</div>
+    <div class="skill-chip">Redux</div>
+    <div class="skill-chip">Firebase</div>
+    <div class="skill-chip">Supabase</div>
+    <div class="skill-chip">REST APIs</div>
+    <div class="skill-chip">Socket.io</div>
+    <div class="skill-chip">Node.js</div>
+    <div class="skill-chip">Next.js</div>
+    <div class="skill-chip">WordPress</div>
+    <div class="skill-chip">Deep Linking</div>
+    <div class="skill-chip">Push Notifications</div>
+    <div class="skill-chip">HTML</div>
+    <div class="skill-chip">CSS</div>
+    <div class="skill-chip">Bootstrap</div>
+    <div class="skill-chip">C / C++</div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section id="experience">
+  <div class="section-eyebrow">Work History</div>
+  <h2>Where I've worked</h2>
+  <div class="exp-list">
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-role">React Native Developer</div>
+        <div class="exp-company">Latitude Technolabs Pvt. Ltd.</div>
+      </div>
+      <div class="exp-period">Sep 2025 – Present</div>
+      <ul class="exp-bullets">
+        <li>Developing and maintaining cross-platform mobile applications for diverse client projects.</li>
+        <li>Collaborating with design and backend teams to implement features and iterative improvements.</li>
+        <li>Following agile development practices and actively participating in code reviews.</li>
+      </ul>
+    </div>
+
+    <div class="exp-item reveal">
+      <div>
+        <div class="exp-role">React Native Developer</div>
+        <div class="exp-company">Coderkube Technology</div>
+      </div>
+      <div class="exp-period">May 2023 – May 2025</div>
+      <ul class="exp-bullets">
+        <li>Built and shipped multiple production-grade React Native applications for iOS and Android.</li>
+        <li>Integrated Firebase, REST APIs, Socket.io, Supabase, Redux, and third-party SDKs into live products.</li>
+        <li>Implemented real-time chat, push notifications, deep linking, and dynamic pagination features.</li>
+        <li>Worked directly with clients to gather requirements and iterate on product features.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="section-eyebrow">Featured Work</div>
+  <h2>Apps I've shipped</h2>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-name">Spillover</div>
+      <p class="project-desc">Restaurant management & CRM platform streamlining operations, customer engagement, and order management. Dedicated apps for restaurant admins and customers — delivery and pickup workflows with loyalty management.</p>
+      <div class="project-tags">
+        <span class="tag">REST API</span>
+        <span class="tag">Push Notifications</span>
+        <span class="tag">Redux</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Court Club</div>
+      <p class="project-desc">Social app for streetball communities — players connect, check court activity, manage profiles, and organise games. Replaces fragmented social media groups with a single purpose-built hub.</p>
+      <div class="project-tags">
+        <span class="tag">Socket.io</span>
+        <span class="tag">Notifications</span>
+        <span class="tag">Deep Linking</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Renewable Energy Hub</div>
+      <p class="project-desc">UK's premier renewable energy platform connecting homeowners seeking solar solutions with registered installers. Firebase-backed with seamless REST API connectivity.</p>
+      <div class="project-tags">
+        <span class="tag">Firebase</span>
+        <span class="tag">REST API</span>
+        <span class="tag">Deep Linking</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Teen Girl's Safety Advice</div>
+      <p class="project-desc">Empowerment app providing teenage girls with daily safety advice. Available in both a free ad-supported version and a premium ad-free subscription — tailored to individual requirements.</p>
+      <div class="project-tags">
+        <span class="tag">REST API</span>
+        <span class="tag">Supabase</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Reg247</div>
+      <p class="project-desc">Business compliance platform offering accounting, tax, and compliance services with tailor-made packages for fast, affordable onboarding across the UK market.</p>
+      <div class="project-tags">
+        <span class="tag">REST API</span>
+        <span class="tag">Dynamic Pagination</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Note Book Diary</div>
+      <p class="project-desc">Intuitive note-taking app for capturing ideas, tasks, and inspirations with seamless organisation, local persistence, and anytime access via Firebase sync.</p>
+      <div class="project-tags">
+        <span class="tag">Firebase</span>
+        <span class="tag">Local Notifications</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-name">Honey Mobile App</div>
+      <p class="project-desc">Innovative mobile application designed for honey harvest record management — helping beekeepers track yields, hive health, and harvest schedules with precision.</p>
+      <div class="project-tags">
+        <span class="tag">REST API</span>
+        <span class="tag">Deep Linking</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Education -->
+<section id="education">
+  <div class="section-eyebrow">Education</div>
+  <h2>Academic background</h2>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="edu-year">2024</div>
+      <div class="edu-abbr">MCA</div>
+      <div class="edu-degree">Master of Computer Applications</div>
+      <p class="edu-desc">Specialisation in software engineering and advanced computing.</p>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-year">2022</div>
+      <div class="edu-abbr">BCA</div>
+      <div class="edu-degree">Bachelor of Computer Applications</div>
+      <p class="edu-desc">Foundation in computer science, programming, and application development.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-eyebrow" style="justify-content:center;margin-bottom:20px;">Let's build something</div>
+    <h2 class="contact-heading">Open to new<br>opportunities.</h2>
+    <p class="contact-sub">Whether you have a project in mind or just want to connect — my inbox is always open.</p>
+    <div class="contact-links">
+      <a href="mailto:dhruvinmunjapara118@gmail.com" class="contact-link">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        dhruvinmunjapara118@gmail.com
+      </a>
+      <a href="tel:+919510304267" class="contact-link">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 5.89 5.89l.96-.96a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        +91 9510304267
+      </a>
+    </div>
+    <a href="mailto:dhruvinmunjapara118@gmail.com" class="btn btn-primary" style="font-size:15px;padding:16px 36px;">
+      Say Hello →
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2025 <span class="footer-accent">Dhruvin Munjapara</span>. All rights reserved.</p>
+  <p style="font-size:11px;">Built with precision · React Native Developer</p>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    ring.style.left   = e.clientX + 'px';
+    ring.style.top    = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .skill-chip, .project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '56px'; ring.style.height = '56px';
+      ring.style.borderColor = 'rgba(77,255,210,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px'; ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(77,255,210,0.4)';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
